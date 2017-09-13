@@ -73,7 +73,8 @@ public class TwitterClient {
 		return tokenjson;
 	}
 	static public void main(String []ss){
-		new TwitterClient();
+		TwitterClient c = new TwitterClient();
+		c.getTargetFansList("KwokMiles");
 	}
 }
 

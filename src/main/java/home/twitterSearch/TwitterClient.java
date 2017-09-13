@@ -1,7 +1,9 @@
 package home.twitterSearch;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
@@ -38,9 +40,12 @@ public class TwitterClient {
 			System.exit(1);
 		}
 		logger.info("tokenResp.getEntity().isRepeatable()"+tokenResp.getEntity().isRepeatable());
-		String string = tokenResp.getEntity().toString();
-		logger.info(string);
-		JSONObject tokenjson = new JSONObject(string);
+		JSONObject tokenjson = null;
+		try {
+			tokenjson = new JSONObject(IOUtils.toString(tokenResp.getEntity().getContent()));
+		} catch (IllegalStateException | IOException e) {
+			e.printStackTrace();
+		}
 		tokenString = tokenjson.get("access_token").toString();
 		logger.info(tokenString);
 	}

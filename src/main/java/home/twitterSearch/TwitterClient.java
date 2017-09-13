@@ -8,9 +8,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 public class TwitterClient {
+	Logger logger=LogManager.getLogger(TwitterClient.class);
 	DefaultHttpClient httpClient;
 	private String tokenString;
 	public TwitterClient(){
@@ -31,14 +34,15 @@ public class TwitterClient {
 			System.exit(1);
 		}
 		if(tokenResp.getStatusLine().getStatusCode()!=200){
-			System.out.println("response code != 200");
+			logger.info("response code != 200");
 			System.exit(1);
 		}
+		logger.info("tokenResp.getEntity().isRepeatable()"+tokenResp.getEntity().isRepeatable());
 		String string = tokenResp.getEntity().toString();
-		System.out.print(string);
+		logger.info(string);
 		JSONObject tokenjson = new JSONObject(string);
 		tokenString = tokenjson.get("access_token").toString();
-		System.out.println(tokenString);
+		logger.info(tokenString);
 	}
 	static public void main(String []ss){
 		new TwitterClient();

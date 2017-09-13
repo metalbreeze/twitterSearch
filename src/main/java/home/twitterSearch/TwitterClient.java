@@ -34,7 +34,9 @@ public class TwitterClient {
 			System.out.println("response code != 200");
 			System.exit(1);
 		}
-		JSONObject tokenjson = new JSONObject(tokenResp.getEntity().toString());
+		String string = tokenResp.getEntity().toString();
+		System.out.print(string);
+		JSONObject tokenjson = new JSONObject(string);
 		tokenString = tokenjson.get("access_token").toString();
 		System.out.println(tokenString);
 	}

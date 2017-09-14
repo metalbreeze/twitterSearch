@@ -54,7 +54,7 @@ public class TwitterClient {
 		HttpGet getRequest=new HttpGet("https://api.twitter.com/1.1/followers/ids.json?cursor="+curl+"1&screen_name="+twitterName+"&count="+COUNT_SIZE);
 		JSONObject json = getResponseJson(getRequest);
 		JSONArray jsonArray = json.getJSONArray("ids");
-		long nextCur = json.getLong("next_cursor_str");
+		long nextCur = json.getLong("next_cursor");
 		if (nextCur==0){
 			return;
 		}else{
@@ -86,9 +86,16 @@ public class TwitterClient {
 		try {
 			TwitterClient c = new TwitterClient();
 			c.getTargetFansList("KwokMiles",-1L);
+			c.end();
 		} catch (IOException e) {
 			logger.error(e);
 		}
+	}
+
+	private void end() throws IOException {
+		bw.flush();
+		httpClient=null;
+		
 	}
 }
 

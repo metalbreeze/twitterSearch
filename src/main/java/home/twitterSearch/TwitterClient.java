@@ -57,7 +57,7 @@ public class TwitterClient {
 		JSONObject json = getResponseJson(getRequest);
 		JSONArray jsonArray = json.getJSONArray("ids");
 		for (Object o : jsonArray) {
-			logger.info(((JSONObject)o).toString());
+			logger.info(o);
 		}
 	}
 	public JSONObject getResponseJson(HttpRequestBase rb){

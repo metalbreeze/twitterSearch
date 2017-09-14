@@ -1,6 +1,9 @@
 package home.twitterSearch;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
@@ -17,10 +20,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class TwitterClient {
-	Logger logger=LogManager.getLogger(TwitterClient.class);
+	static Logger logger=LogManager.getLogger(TwitterClient.class);
 	DefaultHttpClient httpClient;
 	private String tokenString;
-	public TwitterClient(){
+	BufferedWriter bw = null;
+	public TwitterClient() throws IOException{
+		bw =new BufferedWriter(new FileWriter("./ids.txt"));
 		httpClient = new DefaultHttpClient();
 		HttpPost postRequest = new HttpPost(
 				"https://api.twitter.com/oauth2/token");
@@ -28,15 +33,7 @@ public class TwitterClient {
 		postRequest.addHeader("Authorization", "Basic Q0xadjFpVU91M3JYMTFYRlpDam9Db1RFYjpXdmF6eFp5UDhvdzQ4TklhcHBUOGVNcnVnWk9CSURnMXN2cDFLV0hIQWw0REJDQjUwWQ==");
 		postRequest.setEntity(new ByteArrayEntity("grant_type=client_credentials".getBytes()));
 		HttpResponse tokenResp=null;
-		try {
-			tokenResp= httpClient.execute(postRequest);
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+		tokenResp= httpClient.execute(postRequest);
 		if(tokenResp.getStatusLine().getStatusCode()!=200){
 			logger.info("response code != 200");
 			System.exit(1);
@@ -52,14 +49,27 @@ public class TwitterClient {
 		logger.info(tokenString);
 	}
 	final static int COUNT_SIZE=50;
-	public void getTargetFansList(String twitterName){
-		HttpGet getRequest=new HttpGet("https://api.twitter.com/1.1/followers/ids.json?cursor=-1&screen_name="+twitterName+"&count="+COUNT_SIZE);
+	int testcount=0;
+	public void getTargetFansList(String twitterName,long curl) throws IOException{
+		HttpGet getRequest=new HttpGet("https://api.twitter.com/1.1/followers/ids.json?cursor="+curl+"1&screen_name="+twitterName+"&count="+COUNT_SIZE);
 		JSONObject json = getResponseJson(getRequest);
 		JSONArray jsonArray = json.getJSONArray("ids");
-		for (Object o : jsonArray) {
-			logger.info(o);
+		long nextCur = json.getLong("next_cursor_str");
+		if (nextCur==0){
+			return;
+		}else{
+			if (10<testcount++){
+				return;
+			}
+			for (Object o : jsonArray) {
+				bw.write(o.toString());
+				bw.newLine();
+				logger.info(o);
+			}
+			getTargetFansList(twitterName,nextCur);
 		}
 	}
+	
 	public JSONObject getResponseJson(HttpRequestBase rb){
 		rb.addHeader("Authorization", "Bearer "+tokenString);
 		rb.addHeader("Accept", "application/json; charset=utf-8");
@@ -73,8 +83,12 @@ public class TwitterClient {
 		return tokenjson;
 	}
 	static public void main(String []ss){
-		TwitterClient c = new TwitterClient();
-		c.getTargetFansList("KwokMiles");
+		try {
+			TwitterClient c = new TwitterClient();
+			c.getTargetFansList("KwokMiles",-1L);
+		} catch (IOException e) {
+			logger.error(e);
+		}
 	}
 }
 

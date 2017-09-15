@@ -55,7 +55,7 @@ public class TwitterClient {
 	final static int COUNT_SIZE=50;
 	int testcount=0;
 	public void getTargetFansList(String twitterName,long curl) throws IOException{
-		HttpGet getRequest=new HttpGet("https://api.twitter.com/1.1/followers/ids.json?cursor="+curl+"1&screen_name="+twitterName+"&count="+COUNT_SIZE);
+		HttpGet getRequest=new HttpGet("https://api.twitter.com/1.1/followers/ids.json?cursor="+curl+"&screen_name="+twitterName+"&count="+COUNT_SIZE);
 		JSONObject json = getResponseJson(getRequest);
 		JSONArray jsonArray = json.getJSONArray("ids");
 		long nextCur = json.getLong("next_cursor");

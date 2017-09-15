@@ -62,7 +62,7 @@ public class TwitterClient {
 		if (nextCur==0){
 			return;
 		}else{
-			if (10<testcount++){
+			if (5<testcount++){
 				return;
 			}
 			for (Object o : jsonArray) {
@@ -70,6 +70,7 @@ public class TwitterClient {
 				bw.newLine();
 				logger.info(o);
 			}
+			bw.flush();
 			getTargetFansList(twitterName,nextCur);
 		}
 	}

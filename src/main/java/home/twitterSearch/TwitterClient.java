@@ -35,7 +35,7 @@ public class TwitterClient {
 		HttpResponse tokenResp=null;
 		tokenResp= httpClient.execute(postRequest);
 		if(tokenResp.getStatusLine().getStatusCode()!=200){
-			logger.info("response code != 200");
+			logger.error("response code != 200");
 			System.exit(1);
 		}
 		logger.info("tokenResp.getEntity().isRepeatable()"+tokenResp.getEntity().isRepeatable());
@@ -47,6 +47,10 @@ public class TwitterClient {
 		}
 		tokenString = tokenjson.get("access_token").toString();
 		logger.info(tokenString);
+		
+		long l =766196915214090240l;
+		logger.info(Long.MAX_VALUE+"xxx");
+		logger.info(l+"xxx");
 	}
 	final static int COUNT_SIZE=50;
 	int testcount=0;
@@ -76,6 +80,10 @@ public class TwitterClient {
 		JSONObject tokenjson = null;
 		try {
 			HttpResponse execute=httpClient.execute(rb);
+			if(execute.getStatusLine().getStatusCode()!=200){
+				logger.error("response code != 200");
+				System.exit(1);
+			}
 			tokenjson = new JSONObject(IOUtils.toString(execute.getEntity().getContent()));
 		} catch (IOException e) {
 			logger.error(e);

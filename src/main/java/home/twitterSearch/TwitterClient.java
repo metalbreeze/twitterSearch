@@ -50,10 +50,6 @@ public class TwitterClient {
 		}
 		tokenString = tokenjson.get("access_token").toString();
 		logger.info(tokenString);
-		
-		long l =766196915214090240l;
-		logger.info(Long.MAX_VALUE+"xxx");
-		logger.info(l+"xxx");
 	}
 	final static int COUNT_SIZE=50;
 	int testcount=0;
@@ -67,7 +63,7 @@ public class TwitterClient {
 		if (nextCur==0){
 			return;
 		}else{
-			if (5<testcount++){
+			if (20<testcount++){
 				return;
 			}
 			for (Object o : jsonArray) {

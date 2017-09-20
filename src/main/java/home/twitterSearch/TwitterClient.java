@@ -90,6 +90,7 @@ public class TwitterClient {
 			if (header1==null||header2Reset==null){
 				errorCount++;
 				logger.error("headers.length!=1, try again.");
+				execute.getEntity().getContent().close();
 				return getResponseJson(rb);
 			}
 			if(statusCode==429){
@@ -97,6 +98,7 @@ public class TwitterClient {
 				String value = header2Reset.getValue();
 				long parseLong = Long.parseLong(value+"000");
 				long timeMillis = System.currentTimeMillis();
+				execute.getEntity().getContent().close();
 				try {
 					Thread.sleep(parseLong-timeMillis+6000);
 				} catch (InterruptedException e) {
@@ -108,6 +110,7 @@ public class TwitterClient {
 			if(statusCode!=200){
 				errorCount++;
 				logger.error("response code != 200");
+				execute.getEntity().getContent().close();
 				try {
 					Thread.sleep(100000);
 				} catch (InterruptedException e) {

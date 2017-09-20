@@ -41,7 +41,6 @@ public class TwitterClient {
 			logger.error("response code != 200");
 			System.exit(1);
 		}
-		logger.info("tokenResp.getEntity().isRepeatable()"+tokenResp.getEntity().isRepeatable());
 		JSONObject tokenjson = null;
 		try {
 			tokenjson = new JSONObject(IOUtils.toString(tokenResp.getEntity().getContent()));
@@ -54,16 +53,20 @@ public class TwitterClient {
 	final static int COUNT_SIZE=50;
 	int testcount=0;
 	public void getTargetFansList(String twitterName,long curl) throws IOException{
-		HttpGet getRequest=new HttpGet("https://api.twitter.com/1.1/followers/ids.json?cursor="+curl+"&screen_name="+twitterName+"&count="+COUNT_SIZE);
+		String url = "https://api.twitter.com/1.1/followers/ids.json?cursor="+curl+"&screen_name="+twitterName+"&count="+COUNT_SIZE;
+		logger.info("new request "+url);
+		HttpGet getRequest=new HttpGet(url);
 		getRequest.addHeader("Authorization", "Bearer "+tokenString);
 		getRequest.addHeader("Accept", "application/json; charset=utf-8");
 		JSONObject json = getResponseJson(getRequest);
 		JSONArray jsonArray = json.getJSONArray("ids");
 		long nextCur = json.getLong("next_cursor");
 		if (nextCur==0){
+			logger.info("reach to the end");
 			return;
 		}else{
 			if (20<testcount++){
+			logger.info("reach to 20");
 				return;
 			}
 			for (Object o : jsonArray) {

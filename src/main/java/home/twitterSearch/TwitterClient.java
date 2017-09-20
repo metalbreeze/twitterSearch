@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class TwitterClient {
-	static Logger logger=LogManager.getLogger(java.lang.String.class);
+	static Logger logger=LogManager.getLogger(TwitterClient.class);
 	DefaultHttpClient httpClient;
 	private String tokenString;
 	BufferedWriter bw = null;

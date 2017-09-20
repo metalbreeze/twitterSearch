@@ -5,8 +5,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Calendar;
 
+import org.apache.commons.beanutils.converters.CalendarConverter;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
@@ -56,6 +59,8 @@ public class TwitterClient {
 	int testcount=0;
 	public void getTargetFansList(String twitterName,long curl) throws IOException{
 		HttpGet getRequest=new HttpGet("https://api.twitter.com/1.1/followers/ids.json?cursor="+curl+"&screen_name="+twitterName+"&count="+COUNT_SIZE);
+		getRequest.addHeader("Authorization", "Bearer "+tokenString);
+		getRequest.addHeader("Accept", "application/json; charset=utf-8");
 		JSONObject json = getResponseJson(getRequest);
 		JSONArray jsonArray = json.getJSONArray("ids");
 		long nextCur = json.getLong("next_cursor");
@@ -74,16 +79,45 @@ public class TwitterClient {
 			getTargetFansList(twitterName,nextCur);
 		}
 	}
-	
+	volatile  int errorCount=0;
 	public JSONObject getResponseJson(HttpRequestBase rb){
-		rb.addHeader("Authorization", "Bearer "+tokenString);
-		rb.addHeader("Accept", "application/json; charset=utf-8");
+		if (errorCount==4){
+			logger.fatal("error Count == 4, process will exit");
+			System.exit(1);
+		}
 		JSONObject tokenjson = null;
 		try {
 			HttpResponse execute=httpClient.execute(rb);
-			if(execute.getStatusLine().getStatusCode()!=200){
+			int statusCode = execute.getStatusLine().getStatusCode();
+			Header  header1 = execute.getFirstHeader("x-rate-limit-remaining");
+			Header header2Reset = execute.getFirstHeader("x-rate-limit-reset");
+			if (header1==null||header2Reset==null){
+				errorCount++;
+				logger.error("headers.length!=1, try again.");
+				return getResponseJson(rb);
+			}
+			if(statusCode==429){
+				//try sleep time 
+				String value = header2Reset.getValue();
+				long parseLong = Long.parseLong(value+"000");
+				long timeMillis = System.currentTimeMillis();
+				try {
+					Thread.sleep(parseLong-timeMillis+6000);
+				} catch (InterruptedException e) {
+					errorCount++;
+					logger.error("sleep error",e);
+				}
+				return getResponseJson(rb);
+			}
+			if(statusCode!=200){
+				errorCount++;
 				logger.error("response code != 200");
-				System.exit(1);
+				try {
+					Thread.sleep(100000);
+				} catch (InterruptedException e) {
+					logger.error("sleep error",e);
+				}
+				return getResponseJson(rb);
 			}
 			tokenjson = new JSONObject(IOUtils.toString(execute.getEntity().getContent()));
 		} catch (IOException e) {

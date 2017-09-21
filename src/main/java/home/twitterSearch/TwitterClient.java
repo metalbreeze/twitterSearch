@@ -50,11 +50,11 @@ public class TwitterClient {
 		tokenString = tokenjson.get("access_token").toString();
 		logger.info(tokenString);
 	}
-	final static int COUNT_SIZE=50;
-	int testcount=0;
+	final static int COUNT_SIZE=5000;
+	int count=0;
 	public void getTargetFansList(String twitterName,long curl) throws IOException{
 		String url = "https://api.twitter.com/1.1/followers/ids.json?cursor="+curl+"&screen_name="+twitterName+"&count="+COUNT_SIZE;
-		logger.info("new request "+url);
+		logger.info("request No. "+count+": "+url);
 		HttpGet getRequest=new HttpGet(url);
 		getRequest.addHeader("Authorization", "Bearer "+tokenString);
 		getRequest.addHeader("Accept", "application/json; charset=utf-8");
@@ -65,10 +65,10 @@ public class TwitterClient {
 			logger.info("reach to the end");
 			return;
 		}else{
-			if (20<testcount++){
-			logger.info("reach to 20");
-				return;
-			}
+//			if (20<count++){
+//			logger.info("reach to 20");
+//				return;
+//			}
 			for (Object o : jsonArray) {
 				bw.write(o.toString());
 				bw.newLine();
@@ -122,6 +122,18 @@ public class TwitterClient {
 				return getResponseJson(rb);
 			}
 			tokenjson = new JSONObject(IOUtils.toString(execute.getEntity().getContent()));
+			if("0".equalsIgnoreCase(header1.getValue())){
+				//try sleep time 
+				String value = header2Reset.getValue();
+				long parseLong = Long.parseLong(value+"000");
+				long timeMillis = System.currentTimeMillis();
+				execute.getEntity().getContent().close();
+				try {
+					Thread.sleep(parseLong-timeMillis+6000);
+				} catch (InterruptedException e) {
+					logger.error("sleep error",e);
+				}
+			}
 		} catch (IOException e) {
 			logger.error(e);
 		}

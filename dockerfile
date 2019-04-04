@@ -1,3 +1,8 @@
-FROM maven:3.3-jdk-8 
-CMD  mvn clean install
-CMD echo "finished " 
+FROM ubuntu:18.04
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get -y install maven
+RUN apt-get -y install nginx
+
+CMD service nginx start 
+
+ENTRYPOINT echo "reach to entrypoint"

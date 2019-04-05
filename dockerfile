@@ -3,6 +3,5 @@ RUN apt-get update && apt-get -y upgrade
 #RUN apt-get -y install maven
 RUN apt-get -y install nginx
 
-CMD service nginx start 
+ENTRYPOINT service nginx start  && bash
 
-#ENTRYPOINT echo "reach to entrypoint"

@@ -28,16 +28,16 @@ resources:
     # of properties, see the API reference for the resource.
     zone: us-central1-c
     # Replace antigfw-nieshu1 with your project ID
-    machineType: https://www.googleapis.com/compute/v1/projects/antigfw-nieshu1/zones/us-central1-f/machineTypes/f1-micro
+    machineType: https://www.googleapis.com/compute/v1/projects/antigfw-nieshu1/zones/us-central1-c/machineTypes/f1-micro
     disks:
     - deviceName: boot
       type: PERSISTENT
       boot: true
       autoDelete: true
       initializeParams:
-        # Replace ubuntu-1804-bionic-v20190404 with the image family name.
+        # Replace ubuntu-1804-lts with the image family name.
         # See a full list of image families at https://cloud.google.com/compute/docs/images#os-compute-support
-        sourceImage: https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/family/ubuntu-1804-bionic-v20190404
+        sourceImage: https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts
     # Replace antigfw-nieshu1 with your project ID
     networkInterfaces:
     - network: https://www.googleapis.com/compute/v1/projects/antigfw-nieshu1/global/networks/default

@@ -1,7 +1,10 @@
 steps:
-        - name: 'step1'
-          args: ['bash', 'echo xxx > /1.txt']
-        - name: 'step2 build & push image '
-          args: ['build', '-t', 'test-image', '.']
-          images: ['gcr.io/$PROJECT_ID/custom-script-test2']
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      docker build -t gcr.io/$PROJECT_ID/gceme:$TAG_NAME .
+
+
+
 

@@ -1,0 +1,75 @@
+# Copyright 2018 Google LLC
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     https://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+steps:
+
+### Build
+
+  - id: 'date'
+    name: 'date'
+    entrypoint: 'bash'
+    args: 
+      - '-c'
+      - |
+         echo "${ date}" >> /var/www/html/1.txt
+
+  - id: 'build'
+    name: 'build'
+    entrypoint: 'bash'
+    args: 
+      - '-c'
+      - |
+         docker built -t gcr.io/antigfw-nieshu1/github.com/metalbreeze/twittersearch:latest
+
+
+
+### Test
+
+
+### Publish
+  - id: 'publish'
+    name: 'publish'
+    entrypoint: 'bash'
+    args: 
+      - '-c'
+      - |
+         docker push gcr.io/antigfw-nieshu1/github.com/metalbreeze/twittersearch:latest
+
+
+
+### Deploy
+  - id: 'deploy'
+    name: 'deploy'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+      - 'KUBECONFIG=/kube/config'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+          CLUSTER=$$(gcloud config get-value container/cluster)
+          PROJECT=$$(gcloud config get-value core/project)
+          ZONE=$$(gcloud config get-value compute/zone)
+          
+
+          gcloud container clusters get-credentials "$${CLUSTER}" \
+            --project "$${PROJECT}" \
+            --zone "$${ZONE}"  
+
+
+          kubectl get ns production || kubectl create ns production
+          kubectl apply --namespace production --recursive -f cloudbuild-prod.yaml
+          #kubectl apply --namespace production --recursive -f services.yaml
+

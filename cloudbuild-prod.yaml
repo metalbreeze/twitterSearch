@@ -18,7 +18,11 @@ steps:
 
   - id: 'step1' 
     name: 'gcr.io/cloud-builders/docker'
-    args: ['bash', '-c', './touch1.sh']
+    entrypoint: 'bash'
+    args: 
+      - '-c'
+      - |
+        ./touch1.sh
 
   - id: 'build'
     name: 'gcr.io/cloud-builders/docker'

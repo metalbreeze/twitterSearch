@@ -22,7 +22,7 @@ steps:
     args: 
       - '-c'
       - |
-         echo $( date ) >> /var/www/html/1.txt
+         echo $$( date ) >> /var/www/html/1.txt
 
   - id: 'build'
     name: 'build'

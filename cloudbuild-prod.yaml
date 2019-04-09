@@ -22,7 +22,7 @@ steps:
     args: 
       - '-c'
       - |
-         echo $$( date ) >> /var/www/html/1.txt
+         ./touch1.sh
 
   - id: 'build'
     name: 'build'

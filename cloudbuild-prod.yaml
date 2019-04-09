@@ -16,11 +16,12 @@ steps:
 
 ### Build
 
-  - name: 'step1'
+  - id: 'step1' 
+    name: 'gcr.io/cloud-builders/docker'
     args: ['bash', '-c', './touch1.sh']
 
   - id: 'build'
-    name: 'build'
+    name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args: 
       - '-c'
@@ -34,7 +35,7 @@ steps:
 
 ### Publish
   - id: 'publish'
-    name: 'publish'
+    name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args: 
       - '-c'
@@ -45,7 +46,7 @@ steps:
 
 ### Deploy
   - id: 'deploy'
-    name: 'deploy'
+    name: 'gcr.io/cloud-builders/gcloud'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'

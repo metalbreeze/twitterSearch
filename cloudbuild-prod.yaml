@@ -30,7 +30,7 @@ steps:
     args: 
       - '-c'
       - |
-         docker built -t gcr.io/antigfw-nieshu1/github.com/metalbreeze/twittersearch:latest
+         docker built -t gcr.io/$PROJECT_ID/github.com/metalbreeze/twittersearch
 
 
 
@@ -44,7 +44,7 @@ steps:
     args: 
       - '-c'
       - |
-         docker push gcr.io/antigfw-nieshu1/github.com/metalbreeze/twittersearch:latest
+         docker push gcr.io/$PROJECT_ID/github.com/metalbreeze/twittersearch
 
 
 

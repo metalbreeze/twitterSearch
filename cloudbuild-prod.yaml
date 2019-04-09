@@ -16,13 +16,8 @@ steps:
 
 ### Build
 
-  - id: 'date'
-    name: 'date'
-    entrypoint: 'bash'
-    args: 
-      - '-c'
-      - |
-         ./touch1.sh
+  - name: 'step1'
+    args: ['bash', '-c', './touch1.sh']
 
   - id: 'build'
     name: 'build'

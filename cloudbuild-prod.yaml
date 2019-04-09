@@ -30,7 +30,7 @@ steps:
     args: 
       - '-c'
       - |
-         docker built -t gcr.io/$PROJECT_ID/github.com/metalbreeze/twittersearch
+         docker built -t gcr.io/$PROJECT_ID/github.com/metalbreeze/twittersearch .
 
 
 
